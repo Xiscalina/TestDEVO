@@ -18,3 +18,14 @@ def tipo_num(lista):
             if i>sumdiv: print (i,'es defectivo')
             elif i<sumdiv: print (i,'es abundante')
             else: print (i, 'es perfecto')
+
+#pongamos un ejemplo
+
+tipo_num([-2,28,900,0,5])
+
+#cuyo resultado es el siguiente:
+# -2 no es natural
+# 28 es perfecto
+# 900 es abundante
+# 0 no es natural
+# 5 es defectivo
