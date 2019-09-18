@@ -101,7 +101,7 @@ ejercicio2.prototype.cargarSeriesGraficos = function () {
         };
         this.seriesLineas.push({
           nombre: nomCateg,
-          datos: new Array()
+          datosLin: new Array()
         });
         var serieCateg=$.grep(this.conjDatos, function(n,i) {return n.categ==nomCateg;});
         serieCateg.sort(function(a,b){return a.fecha<=b.fecha;}); 
@@ -114,28 +114,102 @@ ejercicio2.prototype.cargarSeriesGraficos = function () {
           else {
             this.seriesLineas[i].datos[index][1] += serieCateg[j].valor);
           } 
-          categ.totalCateg += serieCateg[j].valor;
+          categ.total += serieCateg[j].valor;
+          totalvalores += serieCateg[j].valor;
         }
-        resumenCateg.categ.push(categ);
-        resumenCateg.totalCateg += categ.totalCateg;
+        resumenCateg.categoria.push(categ);
+        resumenCateg.totalCateg += categ.total;
         this.seriesLineas[i].datos.sort(function(a,b){return a[0]>b[0]});
     }
     
-    var seriesPie = {
-        nombre: categ
-        datos: new Array()
+    var seriesPie = {  
+      datosPie: new Array()
     };
-    for (var k=0; k<resumenCateg.categ.lenght; k++){
-        seriesPie.datos.push({
-            nombre: resumenCateg.categ[k].nombre
-            porcentaje: (resumenCateg.categ[k].total/resumenCateg.total)*100
+    for (var k=0; k<resumenCateg.categoria.lenght; k++){
+        seriesPie.datosPie.push({
+            nombre: resumenCateg.categoria[k].nombre,
+            porcentaje: (resumenCateg.categoria[k].totalCateg/totalvalores)*100
         });
     }
     this.seriesPie.push(seriesPie);
 };
 
+// Highcharts Lineas
 
+Ejercicio2.prototype.HC_Lineas = function (container) {
+
+    $(container).highcharts.chart({
+        title: {
+            text: 'Ejercicio 2 - gráfico de lineas'
+        },
+		    subtitle: {
+            text: 'Valores de las categorías por fecha'
+        },
+		    yAxis: {
+            title: {
+                text: 'Valores'
+            }
+        },
+		    legend: {
+          layout:'vertical',
+          align:'right',
+          verticalAlign:'middle'
+        },
+        xAxis: {
+            type: 'datetime',
+            title: {
+                text: 'Fecha'
+            }
+        },
+		    legend: {
+          layout: 'horizontal',
+          align: 'center',
+          verticalAlign: 'bottom'
+		    },
+		    plotOptions: {
+            seriesLineas: {
+                label: {
+                  connectorAllowed: false
+                }
+            }
+        },
+        series: this.seriesLineas
+    });
+};
   
+// Highcharts Pie
 
-
+Ejercicio2.prototype.HC_Pie = function (container) {
+    
+   $(container).highcharts({
+        chart: {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false,
+            type: 'pie'
+        },
+        title: {
+            text: 'Categorías y porcentaje'
+        },
+        tooltip: {
+            pointFormat: '{seriesPie.name}:  <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+                    }
+                }
+            }
+        },
+        series: [{
+           name: 'categorias',
+           colorByPoint: true,
+           data: this.seriesPie
+        }]
+    });
+};
 
